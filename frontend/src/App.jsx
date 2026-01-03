@@ -35,8 +35,8 @@ function App() {
   };
 
   // Filter and sort contacts
-  useEffect(() => {
-    let filtered = [...contacts];
+  // useEffect(() => {
+  //   let filtered = [...contacts];
 
     // Apply search filter
   //   if (searchQuery.trim()) {
