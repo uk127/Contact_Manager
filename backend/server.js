@@ -18,7 +18,6 @@ app.use(cors({
 
 // Body parser
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // MongoDB
 const MONGODB_URI = process.env.MONGO_URI;
