@@ -29,48 +29,62 @@ function App() {
       setContacts(data);
     } catch (error) {
       console.error('Error fetching contacts:', error);
+      // Show user-friendly error message
+      if (error.response) {
+        // Server responded with error
+        setSuccessMessage(`Error: ${error.response.data?.message || 'Failed to load contacts. Please check your connection.'}`);
+      } else if (error.request) {
+        // Request made but no response
+        setSuccessMessage('Error: Cannot connect to server. Please check if the backend is running.');
+      } else {
+        // Something else happened
+        setSuccessMessage(`Error: ${error.message || 'Failed to load contacts.'}`);
+      }
+      setTimeout(() => setSuccessMessage(''), 5000);
+      // Set empty array to prevent crashes
+      setContacts([]);
     } finally {
       setLoading(false);
     }
   };
 
   // Filter and sort contacts
-  // useEffect(() => {
-  //   let filtered = [...contacts];
+  useEffect(() => {
+    let filtered = [...contacts];
 
     // Apply search filter
-  //   if (searchQuery.trim()) {
-  //     const query = searchQuery.toLowerCase();
-  //     filtered = filtered.filter(contact =>
-  //       contact.name.toLowerCase().includes(query) ||
-  //       contact.email.toLowerCase().includes(query) ||
-  //       contact.phone.includes(query)
-  //     );
-  //   }
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(contact =>
+        contact.name.toLowerCase().includes(query) ||
+        contact.email.toLowerCase().includes(query) ||
+        contact.phone.includes(query)
+      );
+    }
 
-  //   // Apply sorting
-  //   filtered.sort((a, b) => {
-  //     let comparison = 0;
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let comparison = 0;
       
-  //     switch (sortBy) {
-  //       case 'name':
-  //         comparison = a.name.localeCompare(b.name);
-  //         return sortOrder === 'asc' ? comparison : -comparison;
-  //       case 'phone':
-  //         comparison = a.phone.localeCompare(b.phone);
-  //         return sortOrder === 'asc' ? comparison : -comparison;
-  //       case 'date':
-  //       default:
-  //         const dateA = new Date(a.createdAt);
-  //         const dateB = new Date(b.createdAt);
-  //         comparison = dateB - dateA;
-  //         return sortOrder === 'newest' ? comparison : -comparison;
-  //     }
-  //   });
+      switch (sortBy) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          return sortOrder === 'asc' ? comparison : -comparison;
+        case 'phone':
+          comparison = a.phone.localeCompare(b.phone);
+          return sortOrder === 'asc' ? comparison : -comparison;
+        case 'date':
+        default:
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          comparison = dateB - dateA;
+          return sortOrder === 'newest' ? comparison : -comparison;
+      }
+    });
 
-  //   setFilteredContacts(filtered);
-  //   setCurrentPage(1); // Reset to first page when filter/sort changes
-  // }, [contacts, searchQuery, sortBy, sortOrder]);
+    setFilteredContacts(filtered);
+    setCurrentPage(1); // Reset to first page when filter/sort changes
+  }, [contacts, searchQuery, sortBy, sortOrder]);
 
   const handleSubmit = async (contactData) => {
     try {
